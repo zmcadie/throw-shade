@@ -69,6 +69,7 @@ const lighten = (color, adj = 0.1, log = false) => blend(color, "#FFFFFF", adj, 
 const darken = (color, adj = 0.1, log = false) => blend(color, "#000000", adj, log)
 
 export {
+  blend,
   lighten,
   darken
 }
