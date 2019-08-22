@@ -2,7 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import uuid from "uuid/v4"
 
-import { lighten, darken, rgblogend } from './colorUtils'
+import { lighten, darken } from './colorUtils'
 
 const Container = styled.div`
   display: grid;
@@ -27,9 +27,9 @@ const ColorBox = ({ hex, rgb }) => {
       <Box color={ hex } style={{ width: "50px", margin: "0 10px" }} />
       { adjs.map(a => <Box key={ uuid() } color={ lighten(hex, a) } />) }
 
-      { adjs.map(a => 1 - a).map(a => <Box key={ uuid() } color={rgblogend(rgb, "rgb(0, 0, 0)", a)} />) }
+      { adjs.map(a => 1 - a).map(a => <Box key={ uuid() } color={darken(rgb, a, true)} />) }
       <Box color={ hex } style={{ width: "50px", margin: "0 10px" }} />
-      { adjs.map(a => <Box key={ uuid() } color={rgblogend(rgb, "rgb(255, 255, 255)", a)} />) }
+      { adjs.map(a => <Box key={ uuid() } color={lighten(rgb, a, true)} />) }
     </Container>
   );
 };

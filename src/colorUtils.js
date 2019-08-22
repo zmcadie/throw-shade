@@ -1,8 +1,14 @@
+const pad0 = str => `${str.length === 1 ? '0' : ''}${str}`
+
 // only works with 7 character hex codes, i.e. #007BFF
 const parseHex = color => color.slice(1).match(/.{2}/g).map(c => parseInt(c, 16))
 
 // only works with rgb, does not support alpha channel
 const parseRGB = color => color.slice(4, -1).split(", ").map(c => parseInt(c, 10))
+
+const arrToRGB = arr => `rgb(${arr.join(", ")})`
+
+const arrToHex = arr => `#${arr.map(n => pad0(n.toString(16))).join("")}`
 
 //////////////////////////////
 //
@@ -14,57 +20,55 @@ const parseRGB = color => color.slice(4, -1).split(", ").map(c => parseInt(c, 10
 //
 //////////////////////////////
 
-const actions = {
+const parseAction = {
   hex: parseHex,
   rgb: parseRGB,
   unknown: c => c
 }
 
-const getRGB = color => {
+const toStrAction = {
+  hex: arrToHex,
+  rgb: arrToRGB,
+  unknown: c => c
+}
+
+const getColorArray = color => {
   const type = color[0] === "#"
     ? "hex"
     : color.slice(0, 3).toLowerCase() === "rgb"
       ? "rgb"
       : "unknown"
-  return {
-    type,
-    color: actions[type](color)
-  }
+  return [ type, parseAction[type](color) ]
 }
 
-const rgblogend = (c0, c1, p) => {
-  const v = s => _ => s * parseInt(_) ** 2;
-  const C = (_, s) =>
-    _.slice(4)
-      .split(/,\s*/)
-      .map(v(s));
-  const f = C(c0, 1 - p);
-  const t = C(c1, p);
-  const g = (_, i) => parseInt((f[i] + t[i]) ** 0.5, 10);
-  const o = f.map(g);
-  const res = `rgb(${o[0]},${o[1]},${o[2]})`;
-  return res;
-};
+const logBlend = (color1, color2, adj) => {
+  const squareShade = shade => color => shade * (color ** 2)
+  const squareColor = (clr, shd) => clr.map(squareShade(shd))
+  const color1Squared = squareColor(color1, 1 - adj)
+  const color2Squared = squareColor(color2, adj)
+  const blendSquareRoot = (clr, i) => Math.trunc((clr + color2Squared[i]) ** 0.5)
+  return color1Squared.map(blendSquareRoot)
+}
 
-const lighten = (hex, adj = 0.1) => {
-  const clrArr = getRGB(hex).color
-  const adjusted = clrArr.map(clr => clr + Math.round((255 - clr) * adj));
-  const strArr = adjusted.map(a => `${a < 16 ? "0" : ""}${a.toString(16)}`);
-  return `#${strArr.join("")}`;
-};
+const linearBlend = (color1, color2, adj) => {
+  const blend = (clr, i) => clr + Math.trunc((color2[i] - clr) * adj)
+  return color1.map(blend)
+}
 
-const darken = (hex, adj = 0.1) => {
-  const clrArr = hex
-    .slice(1)
-    .match(/.{2}/g)
-    .map(clr => parseInt(clr, 16));
-  const adjusted = clrArr.map(clr => clr - Math.round(clr * adj));
-  const strArr = adjusted.map(a => `${a < 16 ? "0" : ""}${a.toString(16)}`);
-  return `#${strArr.join("")}`;
-};
+const blenders = { log: logBlend, linear: linearBlend }
+
+const blend = (color1, color2, adj = 0.5, log = false) => {
+  const [ type1, colorArr1 ] = getColorArray(color1)
+  const [ type2, colorArr2 ] = getColorArray(color2)
+  const blended = blenders[log ? 'log' : 'linear'](colorArr1, colorArr2, adj)
+  return toStrAction[type1](blended)
+}
+
+const lighten = (color, adj = 0.1, log = false) => blend(color, "#FFFFFF", adj, log)
+
+const darken = (color, adj = 0.1, log = false) => blend(color, "#000000", adj, log)
 
 export {
   lighten,
-  darken,
-  rgblogend
+  darken
 }
