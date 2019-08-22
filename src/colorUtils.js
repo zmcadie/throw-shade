@@ -59,7 +59,7 @@ const blenders = { log: logBlend, linear: linearBlend }
 
 const blend = (color1, color2, adj = 0.5, log = false) => {
   const [ type1, colorArr1 ] = getColorArray(color1)
-  const [ type2, colorArr2 ] = getColorArray(color2)
+  const [ , colorArr2 ] = getColorArray(color2)
   const blended = blenders[log ? 'log' : 'linear'](colorArr1, colorArr2, adj)
   return toStrAction[type1](blended)
 }
