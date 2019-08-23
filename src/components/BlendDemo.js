@@ -7,11 +7,12 @@ import { blend } from '../colorUtils'
 const Container = styled.div`
   background: #000;
   border: 1px solid #ddd;
-  color: white;
-  /* display: grid;
-  grid-template-columns: repeat(11, auto); */
+  color: #f8f8f8;
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 40px;
   margin: 20px 0;
-  padding: 20px 20px 20px;
+  padding: 10px 20px 20px;
   row-gap: 10px;
   text-align: center;
   width: fit-content;
@@ -47,9 +48,9 @@ const ColorBox = ({ color1, color2, c1name, c2name }) => {
 
 const BlendDemo = () => (
   <div className="App">
-    <ColorBox color1="#FF0000" color2="#00FF00" c1name="Red" c2name="Green" />
-    <ColorBox color1="#00FF00" color2="#0000FF" c1name="Green" c2name="Blue" />
-    <ColorBox color1="#0000FF" color2="#FF0000" c1name="Blue" c2name="Red" />
+    <ColorBox color1="#FF0000" color2="#00FF00" c1name="red" c2name="green" />
+    <ColorBox color1="#00FF00" color2="#0000FF" c1name="green" c2name="blue" />
+    <ColorBox color1="#0000FF" color2="#FF0000" c1name="blue" c2name="red" />
   </div>
 )
 
