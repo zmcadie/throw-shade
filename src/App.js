@@ -3,11 +3,12 @@ import styled from "styled-components"
 import uuid from "uuid/v4"
 
 import ShadeDemo from "./components/ShadeDemo"
-import BlendDemo from "./components/BlendDemo"
+import BlendDemo, { BlendCode } from "./components/BlendDemo"
+import CodeBlock from "./components/CodeBlock"
 
 const AppContainer = styled.div`
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 300px 1fr auto;
   height: 100vh;
   width: 100vw;
 `
@@ -97,14 +98,15 @@ const pages = [
   }, {
     label: "Blend Colors",
     slug: "blend-colors",
-    Comp: BlendDemo
+    Comp: BlendDemo,
+    code: BlendCode
   }
 ]
 
 const getPage = () => {
   const hash = window.location.hash
   const page = hash ? pages.find(p => p.slug === hash.slice(1)) : pages[0]
-  return page.Comp
+  return page
 }
 
 const App = () => {
@@ -125,8 +127,9 @@ const App = () => {
         />
       </Sidebar>
       <ContentContainer>
-        { page }
+        <page.Comp />
       </ContentContainer>
+      { page.code ? <CodeBlock codeString={page.code} /> : "" }
     </AppContainer>
   )
 }
