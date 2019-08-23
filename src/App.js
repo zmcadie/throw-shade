@@ -3,6 +3,7 @@ import styled from "styled-components"
 import uuid from "uuid/v4"
 
 import ShadeDemo from "./components/ShadeDemo"
+import BlendDemo from "./components/BlendDemo"
 
 const AppContainer = styled.div`
   display: grid;
@@ -87,7 +88,7 @@ const SidebarSection = ({ title, actions }) => {
   )
 }
 
-const pages = [ { label: "Lighten and Darken", Comp: ShadeDemo } ]
+const pages = [ { label: "Lighten and Darken", Comp: ShadeDemo }, { label: "Blend Colors", Comp: BlendDemo } ]
 
 const App = () => {
   const [ page, setPage ] = useState(0)
