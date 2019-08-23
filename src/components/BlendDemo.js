@@ -5,53 +5,51 @@ import uuid from "uuid/v4"
 import { blend } from '../colorUtils'
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: repeat(11, auto);
-  margin: 10px;
-  padding: 10px;
+  background: #000;
+  border: 1px solid #ddd;
+  color: white;
+  /* display: grid;
+  grid-template-columns: repeat(11, auto); */
+  margin: 20px 0;
+  padding: 20px 20px 20px;
   row-gap: 10px;
+  text-align: center;
   width: fit-content;
-`
-
-const Box = styled.div`
-  background: ${p => p.color};
-  height: 50px;
-  width: 40px;
 `
 
 const StyledGradient = styled.div`
   display: flex;
-  grid-column: span 11;
-  margin: 0 10px;
+  margin-top: 10px;
+  width: 500px;
 `
 
-const SmoothGradient = ({ c1, c2 }) => (
+const GradItem = styled.div`
+  background: ${ p => p.color };
+  height: 50px;
+  width: 1%;
+`
+
+const SmoothGradient = ({ c1, c2, log = true }) => (
   <StyledGradient>
-    { [...Array(100).keys()].map(n => <div style={{height: "20px", width: "1%", background: blend(c1, c2, n / 100)}} />) }
+    { [...Array(100).keys()].map(n => <GradItem key={ uuid() } color={blend(c1, c2, n / 100, log)} />) }
   </StyledGradient>
 )
 
-const ColorBox = ({ color1, color2 }) => {
-  const adjs = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+const ColorBox = ({ color1, color2, c1name, c2name }) => {
   return (
     <Container>
+      { `${c1name} <=> ${c2name}` }
+      <SmoothGradient c1={ color1 } c2={ color2 } log={ false } />
       <SmoothGradient c1={ color1 } c2={ color2 } />
-      <Box color={ color1 } style={{ width: "50px", margin: "0 10px" }} />
-      { adjs.map(a => <Box key={ uuid() } color={ blend(color1, color2, a, false) } />) }
-      <Box color={ color2 } style={{ width: "50px", margin: "0 10px" }} />
-      
-      <Box color={ color1 } style={{ width: "50px", margin: "0 10px" }} />
-      { adjs.map(a => <Box key={ uuid() } color={ blend(color1, color2, a) } />) }
-      <Box color={ color2 } style={{ width: "50px", margin: "0 10px" }} />
     </Container>
   )
 }
 
 const BlendDemo = () => (
   <div className="App">
-    <ColorBox color1="#FF0000" color2="#00FF00" />
-    <ColorBox color1="#00FF00" color2="#0000FF" />
-    <ColorBox color1="#0000FF" color2="#FF0000" />
+    <ColorBox color1="#FF0000" color2="#00FF00" c1name="Red" c2name="Green" />
+    <ColorBox color1="#00FF00" color2="#0000FF" c1name="Green" c2name="Blue" />
+    <ColorBox color1="#0000FF" color2="#FF0000" c1name="Blue" c2name="Red" />
   </div>
 )
 

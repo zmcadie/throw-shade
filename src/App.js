@@ -89,14 +89,29 @@ const SidebarSection = ({ title, actions }) => {
   )
 }
 
-const pages = [ { label: "Lighten and Darken", slug: "lighten-and-darken", Comp: ShadeDemo }, { label: "Blend Colors", slug: "blend-colors", Comp: BlendDemo } ]
+const pages = [
+  {
+    label: "Lighten and Darken",
+    slug: "lighten-and-darken",
+    Comp: ShadeDemo
+  }, {
+    label: "Blend Colors",
+    slug: "blend-colors",
+    Comp: BlendDemo
+  }
+]
+
+const getPage = () => {
+  const hash = window.location.hash
+  const page = hash ? pages.find(p => p.slug === hash.slice(1)) : pages[0]
+  return page.Comp
+}
 
 const App = () => {
-  const [ Page, setPage ] = useState(pages[0].Comp)
-  console.log(Page)
+  const [ page, setPage ] = useState(getPage())
 
   useEffect(() => {
-    const handleHashChange = () => setPage(pages.find(p => p.slug === window.location.hash.slice(1)).Comp)
+    const handleHashChange = () => setPage(getPage())
     window.addEventListener("hashchange", handleHashChange)
     return () => window.removeEventListener("hashchange", handleHashChange)
   })
@@ -110,7 +125,7 @@ const App = () => {
         />
       </Sidebar>
       <ContentContainer>
-        { Page }
+        { page }
       </ContentContainer>
     </AppContainer>
   )
