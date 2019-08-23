@@ -19,16 +19,29 @@ const Box = styled.div`
   width: 40px;
 `
 
+const StyledGradient = styled.div`
+  display: flex;
+  grid-column: span 11;
+  margin: 0 10px;
+`
+
+const SmoothGradient = ({ c1, c2 }) => (
+  <StyledGradient>
+    { [...Array(100).keys()].map(n => <div style={{height: "20px", width: "1%", background: blend(c1, c2, n / 100)}} />) }
+  </StyledGradient>
+)
+
 const ColorBox = ({ color1, color2 }) => {
   const adjs = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
   return (
     <Container>
+      <SmoothGradient c1={ color1 } c2={ color2 } />
       <Box color={ color1 } style={{ width: "50px", margin: "0 10px" }} />
-      { adjs.map(a => <Box key={ uuid() } color={ blend(color1, color2, a) } />) }
+      { adjs.map(a => <Box key={ uuid() } color={ blend(color1, color2, a, false) } />) }
       <Box color={ color2 } style={{ width: "50px", margin: "0 10px" }} />
       
       <Box color={ color1 } style={{ width: "50px", margin: "0 10px" }} />
-      { adjs.map(a => <Box key={ uuid() } color={ blend(color1, color2, a, true) } />) }
+      { adjs.map(a => <Box key={ uuid() } color={ blend(color1, color2, a) } />) }
       <Box color={ color2 } style={{ width: "50px", margin: "0 10px" }} />
     </Container>
   )

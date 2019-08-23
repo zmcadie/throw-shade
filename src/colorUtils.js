@@ -57,16 +57,16 @@ const linearBlend = (color1, color2, adj) => {
 
 const blenders = { log: logBlend, linear: linearBlend }
 
-const blend = (color1, color2, adj = 0.5, log = false) => {
+const blend = (color1, color2, adj = 0.5, log = true) => {
   const [ type1, colorArr1 ] = getColorArray(color1)
   const [ , colorArr2 ] = getColorArray(color2)
   const blended = blenders[log ? 'log' : 'linear'](colorArr1, colorArr2, adj)
   return toStrAction[type1](blended)
 }
 
-const lighten = (color, adj = 0.1, log = false) => blend(color, "#FFFFFF", adj, log)
+const lighten = (color, adj = 0.1, log = true) => blend(color, "#FFFFFF", adj, log)
 
-const darken = (color, adj = 0.1, log = false) => blend(color, "#000000", adj, log)
+const darken = (color, adj = 0.1, log = true) => blend(color, "#000000", adj, log)
 
 export {
   blend,

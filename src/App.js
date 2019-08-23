@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import uuid from "uuid/v4"
 
@@ -14,7 +14,7 @@ const AppContainer = styled.div`
 
 const Sidebar = styled.div`
   background: #663C6D;
-  color: white;
+  color: #f8f8f8;
   margin: 0;
   padding: 20px;
 `
@@ -57,6 +57,7 @@ const SidebarAction = styled.li`
 `
 
 const ContentContainer = styled.div`
+  background: #f8f8f8;
   box-sizing: border-box;
   height: 100%;
   padding: 50px;
@@ -88,21 +89,28 @@ const SidebarSection = ({ title, actions }) => {
   )
 }
 
-const pages = [ { label: "Lighten and Darken", Comp: ShadeDemo }, { label: "Blend Colors", Comp: BlendDemo } ]
+const pages = [ { label: "Lighten and Darken", slug: "lighten-and-darken", Comp: ShadeDemo }, { label: "Blend Colors", slug: "blend-colors", Comp: BlendDemo } ]
 
 const App = () => {
-  const [ page, setPage ] = useState(0)
-  const { Comp } = pages[page]
+  const [ Page, setPage ] = useState(pages[0].Comp)
+  console.log(Page)
+
+  useEffect(() => {
+    const handleHashChange = () => setPage(pages.find(p => p.slug === window.location.hash.slice(1)).Comp)
+    window.addEventListener("hashchange", handleHashChange)
+    return () => window.removeEventListener("hashchange", handleHashChange)
+  })
+
   return (
     <AppContainer>
       <Sidebar>
         <SidebarSection
           title="Demos"
-          actions={ pages.map((p, i) => ({ label: p.label, action: () => setPage(i) })) }
+          actions={ pages.map(p => ({ label: p.label, action: () => window.location = `#${p.slug}` })) }
         />
       </Sidebar>
       <ContentContainer>
-        <Comp />
+        { Page }
       </ContentContainer>
     </AppContainer>
   )
