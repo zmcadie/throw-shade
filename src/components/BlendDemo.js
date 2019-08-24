@@ -86,5 +86,6 @@ const blend = (color1, color2, adj = 0.5, log = true) => {
 }`
 
 export {
-  BlendCode
+  BlendCode,
+  SmoothGradient
 }

@@ -5,6 +5,7 @@ import uuid from "uuid/v4"
 import ShadeDemo from "./components/ShadeDemo"
 import BlendDemo, { BlendCode } from "./components/BlendDemo"
 import CodeBlock from "./components/CodeBlock"
+import ColorIsBroken from "./components/ColorIsBroken"
 
 const AppContainer = styled.div`
   display: grid;
@@ -49,6 +50,7 @@ const SidebarActionsContainer = styled.ul`
 `
 
 const SidebarAction = styled.li`
+  color: ${p => p.selected ? "#84C68C" : "inherit"};
   cursor: pointer;
   padding: 10px 0;
 
@@ -61,6 +63,7 @@ const ContentContainer = styled.div`
   background: #f8f8f8;
   box-sizing: border-box;
   height: 100%;
+  overflow-y: scroll;
   padding: 50px;
   width: 100%;
 `
@@ -78,19 +81,28 @@ const DownArrow = () => (
   </StyledSvg>
 )
 
-const SidebarSection = ({ title, actions }) => {
+const SidebarSection = ({ title, pages }) => {
   const [ isOpen, setIsOpen ] = useState(true)
   return (
     <StyledSidebarSection>
       <SidebarTitle isOpen={ isOpen } onClick={ () => setIsOpen(!isOpen) }>{ title }<DownArrow /></SidebarTitle>
       <SidebarActionsContainer isOpen={ isOpen }>
-        { actions.map(a => <SidebarAction key={ uuid() } onClick={ a.action }>{ a.label }</SidebarAction>) }
+      {/* .map(p => ({ label: p.label, action: () => window.location = `#${p.slug}` })) } */}
+        { pages.map(p => <SidebarAction key={ uuid() } selected={ window.location.hash.slice(1) === p.slug } onClick={ () => window.location = `#${p.slug}` }>{ p.label }</SidebarAction>) }
       </SidebarActionsContainer>
     </StyledSidebarSection>
   )
 }
 
-const pages = [
+const posts = [
+  {
+    label: "Color is Broken",
+    slug: "color-is-broken",
+    Comp: ColorIsBroken
+  }
+]
+
+const demos = [
   {
     label: "Lighten and Darken",
     slug: "lighten-and-darken",
@@ -102,6 +114,8 @@ const pages = [
     code: BlendCode
   }
 ]
+
+const pages = [ ...posts, ...demos ]
 
 const getPage = () => {
   const hash = window.location.hash
@@ -122,8 +136,12 @@ const App = () => {
     <AppContainer>
       <Sidebar>
         <SidebarSection
+          title="Overview"
+          pages={ posts }
+        />
+        <SidebarSection
           title="Demos"
-          actions={ pages.map(p => ({ label: p.label, action: () => window.location = `#${p.slug}` })) }
+          pages={ demos }
         />
       </Sidebar>
       <ContentContainer>
