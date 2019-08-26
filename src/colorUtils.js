@@ -48,6 +48,86 @@ const getColorArray = color => {
   return [ type, parse[type](color) ]
 }
 
+// The following two functions are based on the math explained by Nikolai Waldman here: https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
+
+// convert array of [r, g, b] values to [h, s, l] values
+const rgbToHSL = rgb => {
+  // convert RGB to values between 0-1
+  const [r, g, b] = rgb.map(c => c / 255)
+
+  // get min/max
+  const min = Math.min(r, g, b)
+  const max = Math.max(r, g, b)
+  
+  // luminance = max + min / 2, round up and convert to percent
+  const lum = Math.round(((min + max) / 2) * 100)
+
+  // if min === max there is no saturation
+  // if luminance is > 50% then saturation = (max - min) / (2 - max - min)
+  // if luminance is < 50% then saturation = (max - min) / (max + min)
+  // round up and convert to percent
+  const sat = min === max ? 0 : Math.round((lum < 50
+  	? (max - min) / (max + min)
+    : (max - min) / (2 - max - min)) * 100)
+  
+  // if saturation is 0 hue is also 0
+  // the formula for hue depends on what value is greatest
+  // if max is red then hue = (green - blue) / (max - min)
+  // if max is green then hue = 2 + (blue - red) / (max - min)
+  // if max is blue then hue = 4 + (red - green) / (max - min)
+  // round up and convert to degrees
+  let hue = sat
+  	? r === max
+    	? (g - b) / (max - min)
+      : g === max
+      	? 2 + (b - r) / (max - min)
+        : 4 + (r - g) / (max - min)
+  	: 0
+  hue = Math.round(hue * 60)
+	if (hue < 0) hue = hue + 360
+
+	return [hue, sat, lum]
+}
+
+const hslToRGB = hsl => {
+  const [h, s, l] = hsl.map((n, i) => i === 0 ? n / 360 : n / 100)
+
+  // if there's no saturation it's a shade of grey so we just convert luminence and set r, g, and b to that level
+  if (s === 0) {
+    const lum = Math.round(l * 255)
+    return Array(3).fill(lum)
+  }
+
+  // we create temp variables to help with calculations later
+  // if luminance is < 50% then temp1 = luminance * (1 + saturation)
+  // if luminance is > 50% then temp1 = (luminance + saturation) - (luminance * saturation)
+  const temp1 = l < 0.5 ? l * (1 + s) : (l + s) - (l * s)
+  const temp2 = 2 * l - temp1
+
+  // now we save temporary values for each color channel
+  // if any values are above 1 we subtract 1, if below 1 we add 1
+  const tempR = h < 0.667 ? h + 0.333 : h - 0.667
+  const tempG = h
+  const tempB = h < 0.333 ? h + 0.667 : h - 0.333
+
+  // now we do up to three test for each channel to find the right formula
+  // test1: if 6 x temporary channel is < 1 then channel = temp2 + (temp1 - temp2) * 6 * temporary channel
+  // test2: if 2 x temporary channel is < 1 then channel = temp1
+  // test3: if 3 x temporary channel is < 2 then channel = temp2 + (temp1 - temp2) * (0.666 - temporary channel) * 6
+  // if none pass then channel = temp2
+  const test = ch => 6 * ch < 1
+    ? temp2 + (temp1 - temp2) * 6 * ch
+    : 2 * ch < 1
+      ? temp1
+      : 3 * ch < 2
+        ? temp2 + (temp1 - temp2) * (0.666 - ch) * 6
+        : temp2
+  const rgb = [tempR, tempG, tempB].map(test)
+
+  // convert to 8-bit colors and return
+  return rgb.map(c => Math.round(c * 255))
+}
+
 const mixNum = (num1, num2, adj) => num1 + ((num2 - num1) * adj)
 const blendArr = (arr1, arr2, adj) => arr1.map((num, i) => Math.trunc(mixNum(num, arr2[i], adj)))
 
