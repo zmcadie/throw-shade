@@ -6,7 +6,7 @@ import { lighten, darken } from '../colorUtils'
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(19, auto);
+  grid-template-columns: repeat(20, auto);
   margin: 10px;
   padding: 10px;
   row-gap: 10px;
@@ -36,8 +36,17 @@ const CenterBoxLabel = styled(StyledBoxLabel)`
   margin: 0 10px;
 `
 
+const FunctionLabel = styled.div`
+  background: #ddd;
+  margin: 0 10px;
+  text-align: center;
+  transform: rotate(180deg);
+  writing-mode: vertical-lr;
+`
+
 const BoxLabel = ({ color }) => (
   <>
+    <div />
     <StyledBoxLabel>Darken</StyledBoxLabel>
     <CenterBoxLabel style={{ gridColumn: "span 1" }}>{ color }</CenterBoxLabel>
     <StyledBoxLabel>Lighten</StyledBoxLabel>
@@ -49,10 +58,12 @@ const ColorBox = ({ color, name }) => {
   return (
     <Container>
       <BoxLabel color={ name } />
-      { adjs.map(a => 1 - a).map(a => <Box key={ uuid() } color={darken(color, a, false)} />) }
+      <FunctionLabel>Linear</FunctionLabel>
+      { adjs.map(a => 1 - a).map(a => <Box key={ uuid() } color={darken(color, a, "linear")} />) }
       <CenterBox color={ color } />
-      { adjs.map(a => <Box key={ uuid() } color={ lighten(color, a, false) } />) }
+      { adjs.map(a => <Box key={ uuid() } color={ lighten(color, a, "linear") } />) }
 
+      <FunctionLabel>Log</FunctionLabel>
       { adjs.map(a => 1 - a).map(a => <Box key={ uuid() } color={darken(color, a)} />) }
       <CenterBox color={ color } />
       { adjs.map(a => <Box key={ uuid() } color={lighten(color, a)} />) }

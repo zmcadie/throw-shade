@@ -18,20 +18,28 @@ const Container = styled.div`
   width: fit-content;
 `
 
+const FunctionLabel = styled.div`
+  color: white;
+  margin: 20px 0 0 -25px;
+  text-align: center;
+  transform: rotate(180deg);
+  writing-mode: vertical-lr;
+`
+
 const StyledGradient = styled.div`
   display: flex;
-  margin-top: 10px;
+  margin-top: 20px;
   width: 500px;
 `
 
 const GradItem = styled.div`
-  height: 50px;
+  height: 75px;
   width: 1%;
 `
 
-const SmoothGradient = ({ c1, c2, log = true }) => (
+const SmoothGradient = ({ c1, c2, type = "log" }) => (
   <StyledGradient>
-    { [...Array(100).keys()].map(n => <GradItem key={ uuid() } style={{ background: blend(c1, c2, n / 100, log) }} />) }
+    { [...Array(100).keys()].map(n => <GradItem key={ uuid() } style={{ background: blend(c1, c2, n / 100, type) }} />) }
   </StyledGradient>
 )
 
@@ -39,8 +47,18 @@ const ColorBox = ({ color1, color2, c1name, c2name }) => {
   return (
     <Container>
       { `${c1name} <=> ${c2name}` }
-      <SmoothGradient c1={ color1 } c2={ color2 } log={ false } />
-      <SmoothGradient c1={ color1 } c2={ color2 } />
+      <div style={{ display: "flex" }}>
+        <FunctionLabel>Linear</FunctionLabel>
+        <SmoothGradient c1={ color1 } c2={ color2 } type="linear" />
+      </div>
+      <div style={{ display: "flex" }}>
+        <FunctionLabel>Log</FunctionLabel>
+        <SmoothGradient c1={ color1 } c2={ color2 } />
+      </div>
+      <div style={{ display: "flex" }}>
+        <FunctionLabel>HSL</FunctionLabel>
+        <SmoothGradient c1={ color1 } c2={ color2 } type="hsl" />
+      </div>
     </Container>
   )
 }
@@ -55,37 +73,6 @@ const BlendDemo = () => (
 
 export default BlendDemo
 
-const BlendCode = `// Blend to colors by squaring before blending
-// Then return the square root of the result
-const logBlend = (color1, color2, adj) => {
-
-  // given a shade (e.g. 0.4) returns a function
-  // that multiplies the square of a given color value by that shade
-  const squareShade = shade => color => shade * (color ** 2)
-
-  // maps color values to squared and shaded values
-  const squareColor = (clr, shd) => clr.map(squareShade(shd))
-
-  const color1Squared = squareColor(color1, 1 - adj)
-  const color2Squared = squareColor(color2, adj)
-  
-  const blendSquareRoot = (clr, i) => Math.trunc((clr + color2Squared[i]) ** 0.5)
-  return color1Squared.map(blendSquareRoot)
-}
-
-const linearBlend = (color1, color2, adj) => {
-  const blend = (clr, i) => clr + Math.trunc((color2[i] - clr) * adj)
-  return color1.map(blend)
-}
-
-const blend = (color1, color2, adj = 0.5, log = true) => {
-  const [ type1, colorArr1 ] = getColorArray(color1)
-  const [ , colorArr2 ] = getColorArray(color2)
-  const blended = blenders[log ? 'log' : 'linear'](colorArr1, colorArr2, adj)
-  return toStrAction[type1](blended)
-}`
-
 export {
-  BlendCode,
   SmoothGradient
 }

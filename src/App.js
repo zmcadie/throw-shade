@@ -3,7 +3,7 @@ import styled from "styled-components"
 import uuid from "uuid/v4"
 
 import ShadeDemo from "./components/ShadeDemo"
-import BlendDemo, { BlendCode } from "./components/BlendDemo"
+import BlendDemo from "./components/BlendDemo"
 import CodeBlock from "./components/CodeBlock"
 import ColorIsBroken from "./components/ColorIsBroken"
 
@@ -110,8 +110,7 @@ const demos = [
   }, {
     label: "Blend Colors",
     slug: "blend-colors",
-    Comp: BlendDemo,
-    code: BlendCode
+    Comp: BlendDemo
   }
 ]
 

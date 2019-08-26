@@ -89,6 +89,7 @@ const rgbToHSL = rgb => {
 	return [hue, sat, lum]
 }
 
+// convert array of [h, s, l] values to [r, g, b] values
 const hslToRGB = hsl => {
   const [h, s, l] = hsl.map((n, i) => i === 0 ? n / 360 : n / 100)
 
@@ -128,6 +129,19 @@ const hslToRGB = hsl => {
   return rgb.map(c => Math.round(c * 255))
 }
 
+//////////////////////////////
+//
+//    TO DO
+//    ‾‾‾‾‾
+//    1. Check hsl blending functions, color's don't blend as smoothly as linear & log
+//       maybe number of colors between two colors in hsl color spectrum is greater?
+//       Problem visible in color blending demo
+// 
+//    2. Fix hsl blending for colors that wrap around the visible spectrum
+//       Currently blue mixed with red goes through green spectrum instead of just blending to purple
+//
+//////////////////////////////
+
 const mixNum = (num1, num2, adj) => num1 + ((num2 - num1) * adj)
 const blendArr = (arr1, arr2, adj) => arr1.map((num, i) => Math.trunc(mixNum(num, arr2[i], adj)))
 
@@ -137,18 +151,25 @@ const logBlend = (color1, color2, adj) => {
   return blendArr(color1Squared, color2Squared, adj).map(clr => Math.trunc(clr ** 0.5))
 }
 
-const blenders = { log: logBlend, linear: blendArr }
+// convert [r, g, b] channels to hsl, blend, and convert back
+const hslBlend = (color1, color2, adj) => hslToRGB(blendArr(rgbToHSL(color1), rgbToHSL(color2), adj))
 
-const blendColors = (color1, color2, adj = 0.5, log = true) => {
+const blenders = { log: logBlend, linear: blendArr, hsl: hslBlend }
+
+const blendColors = (color1, color2, adj = 0.5, type = "log") => {
   const [ type1, colorArr1 ] = getColorArray(color1)
-  const [ , colorArr2 ] = getColorArray(color2)
-  const blended = blenders[log && type1 !== "hsl" ? 'log' : 'linear'](colorArr1, colorArr2, adj)
+  const [ type2, colorArr2 ] = getColorArray(color2)
+  if (type1 !== type2) {
+    console.error(`Blending colours must be the same format.\nColor 1 is type: ${type1}\nColor 2 is type: ${type2}`)
+  }
+  const blendType = type1 === "hsl" ? "linear" : type
+  const blended = blenders[blendType](colorArr1, colorArr2, adj)
   return toStrAction[type1](blended)
 }
 
-const lighten = (color, adj = 0.1, log = true) => blendColors(color, "#FFFFFF", adj, log)
+const lighten = (color, adj = 0.1, type = "log") => blendColors(color, "#FFFFFF", adj, type)
 
-const darken = (color, adj = 0.1, log = true) => blendColors(color, "#000000", adj, log)
+const darken = (color, adj = 0.1, type = "log") => blendColors(color, "#000000", adj, type)
 
 export {
   blendColors as blend,

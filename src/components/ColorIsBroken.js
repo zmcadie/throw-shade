@@ -35,7 +35,7 @@ const ColorIsBroken = () => (
       Let's break it down a bit and just look at the midpoint of each:
     </p>
     <div style={{ display: "flex" }}>
-      <div style={{ height: "50px", width: "250px", background: blend("#FF0000", "#00FF00", 0.5, false) }} />
+      <div style={{ height: "50px", width: "250px", background: blend("#FF0000", "#00FF00", 0.5, "linear") }} />
       <div style={{ height: "50px", width: "250px", background: blend("#FF0000", "#00FF00") }} />
     </div>
     <p>
@@ -58,7 +58,7 @@ const ColorIsBroken = () => (
       Unfortunately most software is lazy and skips that step.
     </p>
     <p>Lazy:</p>
-    <SmoothGradient c1="#FF0000" c2="#00FF00" log={ false } />
+    <SmoothGradient c1="#FF0000" c2="#00FF00" type="linear" />
     <p>Correct:</p>
     <SmoothGradient c1="#FF0000" c2="#00FF00" />
     <p>
