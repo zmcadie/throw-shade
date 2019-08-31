@@ -171,8 +171,20 @@ const lighten = (color, adj = 0.1, type = "log") => blendColors(color, "#FFFFFF"
 
 const darken = (color, adj = 0.1, type = "log") => blendColors(color, "#000000", adj, type)
 
+const conversionFunctions = {
+  pad0,
+  parseHex,
+  parseRGB,
+  parseHSL,
+  arrToRGB,
+  arrToHex,
+  arrToHsl,
+  getColorArray
+}
+
 export {
   blendColors as blend,
   lighten,
-  darken
+  darken,
+  conversionFunctions
 }
