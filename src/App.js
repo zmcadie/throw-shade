@@ -5,7 +5,6 @@ import uuid from "uuid/v4"
 import ShadeDemo from "./components/ShadeDemo"
 import BlendDemo from "./components/BlendDemo"
 import CodeBlock from "./components/CodeBlock"
-import ColorIsBroken from "./components/ColorIsBroken"
 
 const AppContainer = styled.div`
   display: grid;
@@ -94,14 +93,6 @@ const SidebarSection = ({ title, pages }) => {
   )
 }
 
-const posts = [
-  {
-    label: "Color is Broken",
-    slug: "color-is-broken",
-    Comp: ColorIsBroken
-  }
-]
-
 const demos = [
   {
     label: "Lighten and Darken",
@@ -114,7 +105,7 @@ const demos = [
   }
 ]
 
-const pages = [ ...posts, ...demos ]
+const pages = [ ...demos ]
 
 const getPage = () => {
   const hash = window.location.hash
@@ -134,10 +125,6 @@ const App = () => {
   return (
     <AppContainer>
       <Sidebar>
-        <SidebarSection
-          title="Overview"
-          pages={ posts }
-        />
         <SidebarSection
           title="Demos"
           pages={ demos }
