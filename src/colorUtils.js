@@ -140,6 +140,9 @@ const hslToRGB = hsl => {
 //    2. Fix hsl blending for colors that wrap around the visible spectrum
 //       Currently blue mixed with red goes through green spectrum instead of just blending to purple
 //
+//    3. hslToRGB consistently converts to one or two points off of the correct conversion.
+//       Look into rounding errors and other points of imprecision
+//
 //////////////////////////////
 
 const mixNum = (num1, num2, adj) => num1 + ((num2 - num1) * adj)
@@ -179,7 +182,9 @@ const conversionFunctions = {
   arrToRGB,
   arrToHex,
   arrToHsl,
-  getColorArray
+  getColorArray,
+  rgbToHSL,
+  hslToRGB
 }
 
 export {

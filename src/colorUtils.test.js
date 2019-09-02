@@ -1,6 +1,6 @@
 import { conversionFunctions } from './colorUtils'
 
-const { pad0, parseHex, parseRGB, parseHSL, arrToRGB, arrToHex, arrToHsl, getColorArray } = conversionFunctions
+const { pad0, parseHex, parseRGB, parseHSL, arrToRGB, arrToHex, arrToHsl, getColorArray, rgbToHSL, hslToRGB } = conversionFunctions
 
 describe('test color to array and array to color functions', () => {
   describe('helper functions for conversion functions', () => {
@@ -49,6 +49,20 @@ describe('test color to array and array to color functions', () => {
       expect(getColorArray('#FFFFFF')).toEqual(["hex", [255, 255, 255]])
       expect(getColorArray('rgb(255, 128, 0')).toEqual(["rgb", [255, 128, 0]])
       expect(getColorArray('hsl(14, 77%, 33%')).toEqual(["hsl", [14, 77, 33]])
+    })
+  })
+
+  describe('rgb array <=> hsl array conversion functions', () => {
+    test('converts array of values representing r, g, b to array of h, s, l', () => {
+      expect(rgbToHSL([255, 0, 255])).toEqual([300, 100, 50])
+      expect(rgbToHSL([255, 255, 255])).toEqual([0, 0, 100])
+      expect(rgbToHSL([0, 0, 0])).toEqual([0, 0, 0])
+    })
+    
+    test('converts array of values representing h, s, l to array of r, g, b', () => {
+      expect(hslToRGB([300, 100, 50])).toEqual([255, 0, 255])
+      expect(hslToRGB([0, 0, 100])).toEqual([255, 255, 255])
+      expect(hslToRGB([0, 0, 0])).toEqual([0, 0, 0])
     })
   })
 })
