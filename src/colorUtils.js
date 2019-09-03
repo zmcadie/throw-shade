@@ -146,7 +146,7 @@ const hslToRGB = hsl => {
 //////////////////////////////
 
 const mixNum = (num1, num2, adj) => num1 + ((num2 - num1) * adj)
-const blendArr = (arr1, arr2, adj) => arr1.map((num, i) => Math.trunc(mixNum(num, arr2[i], adj)))
+const blendArr = (arr1, arr2, adj) => arr1.map((num, i) => mixNum(num, arr2[i], adj))
 
 const logBlend = (color1, color2, adj) => {
   const color1Squared = color1.map(clr => clr ** 2)
@@ -154,10 +154,12 @@ const logBlend = (color1, color2, adj) => {
   return blendArr(color1Squared, color2Squared, adj).map(clr => Math.trunc(clr ** 0.5))
 }
 
+const linearBlend = (color1, color2, adj) => blendArr(color1, color2, adj).map(num => Math.trunc(num))
+
 // convert [r, g, b] channels to hsl, blend, and convert back
 const hslBlend = (color1, color2, adj) => hslToRGB(blendArr(rgbToHSL(color1), rgbToHSL(color2), adj))
 
-const blenders = { log: logBlend, linear: blendArr, hsl: hslBlend }
+const blenders = { log: logBlend, linear: linearBlend, hsl: hslBlend }
 
 const blendColors = (color1, color2, adj = 0.5, type = "log") => {
   const [ type1, colorArr1 ] = getColorArray(color1)
@@ -187,9 +189,18 @@ const conversionFunctions = {
   hslToRGB
 }
 
+const blendingFunctions = {
+  mixNum,
+  blendArr,
+  logBlend,
+  linearBlend,
+  hslBlend
+}
+
 export {
   blendColors as blend,
   lighten,
   darken,
-  conversionFunctions
+  conversionFunctions,
+  blendingFunctions
 }
