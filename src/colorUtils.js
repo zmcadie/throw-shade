@@ -123,7 +123,7 @@ const hslToRGB = hsl => {
       : 3 * ch < 2
         ? temp2 + (temp1 - temp2) * (0.666 - ch) * 6
         : temp2
-  const rgb = [tempR, tempG, tempB].map(test)
+  const rgb = [tempR, tempG, tempB].map(test).map(v => v < 0 ? 0 : v)
 
   // convert to 8-bit colors and return
   return rgb.map(c => Math.round(c * 255))
