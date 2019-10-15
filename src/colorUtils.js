@@ -166,19 +166,28 @@ const hslToRGB2 = hsl => {
   return rgb1
 }
 
+// alternate shorter function than v2
+// based on formula found at https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB_alternative
+const hslToRGB3 = hsl => {
+  const [h, s, l] = hsl.map((n, i) => i === 0 ? n : n / 100)
+
+  // if there's no saturation it's a shade of grey so we just convert luminence and set r, g, and b to that level
+  if (s === 0) { return Array(3).fill(Math.round(l * 255)) }
+
+  const func = n => {
+    const k = (n + h / 30) % 12
+    const a = s * Math.min(l, 1 - l)
+    return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+  }
+
+  return [0, 8, 4].map(v => Math.round(func(v) * 255))
+}
+
 //////////////////////////////
 //
 //    TO DO
 //    ‾‾‾‾‾
-//    1. Check hsl blending functions, color's don't blend as smoothly as linear & log
-//       maybe number of colors between two colors in hsl color spectrum is greater?
-//       Problem visible in color blending demo
-// 
-//    2. Fix hsl blending for colors that wrap around the visible spectrum
-//       Currently blue mixed with red goes through green spectrum instead of just blending to purple
-//
-//    3. hslToRGB consistently converts to one or two points off of the correct conversion.
-//       Look into rounding errors and other points of imprecision
+//    1. Compare 3 hsl conversion functions for accuracy and speed
 //
 //////////////////////////////
 
@@ -200,7 +209,7 @@ const hslBlend = (color1, color2, adj) => {
   if (hsl1[0] > hsl2[0] && hsl1[0] - hsl2[0] > hsl2[0] + 360 - hsl1[0]) hsl2[0] += 360
   if (hsl1[0] < hsl2[0] && hsl2[0] - hsl1[0] > hsl1[0] + 360 - hsl2[0]) hsl1[0] += 360
   const blended = blendArr(hsl1, hsl2, adj)
-  return hslToRGB2(blended)
+  return hslToRGB3(blended)
 }
 
 const blenders = { log: logBlend, linear: linearBlend, hsl: hslBlend }
