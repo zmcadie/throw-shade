@@ -59,23 +59,21 @@ const rgbToHSL = rgb => {
   const min = Math.min(r, g, b)
   const max = Math.max(r, g, b)
   
-  // luminance = max + min / 2, round up and convert to percent
-  const lum = Math.round(((min + max) / 2) * 100)
+  // luminance = max + min / 2
+  let lum = (min + max) / 2
 
   // if min === max there is no saturation
   // if luminance is > 50% then saturation = (max - min) / (2 - max - min)
   // if luminance is < 50% then saturation = (max - min) / (max + min)
-  // round up and convert to percent
-  const sat = min === max ? 0 : Math.round((lum < 50
+  let sat = min === max ? 0 : (lum < 0.5
   	? (max - min) / (max + min)
-    : (max - min) / (2 - max - min)) * 100)
+    : (max - min) / (2 - max - min))
   
   // if saturation is 0 hue is also 0
   // the formula for hue depends on what value is greatest
   // if max is red then hue = (green - blue) / (max - min)
   // if max is green then hue = 2 + (blue - red) / (max - min)
   // if max is blue then hue = 4 + (red - green) / (max - min)
-  // round up and convert to degrees
   let hue = sat
   	? r === max
     	? (g - b) / (max - min)
@@ -83,8 +81,12 @@ const rgbToHSL = rgb => {
       	? 2 + (b - r) / (max - min)
         : 4 + (r - g) / (max - min)
   	: 0
+  
+  // convert hue to degrees, saturation and luminance to percent
   hue = Math.round(hue * 60)
-	if (hue < 0) hue = hue + 360
+  if (hue < 0) hue = hue + 360
+  sat = Math.round(sat * 100)
+  lum = Math.round(lum * 100)
 
 	return [hue, sat, lum]
 }
@@ -123,10 +125,12 @@ const hslToRGB = hsl => {
       : 3 * ch < 2
         ? temp2 + (temp1 - temp2) * (0.666 - ch) * 6
         : temp2
-  const rgb = [tempR, tempG, tempB].map(test).map(v => v < 0 ? 0 : v)
+  const rgb = [tempR, tempG, tempB].map(test)
 
   // convert to 8-bit colors and return
-  return rgb.map(c => Math.round(c * 255))
+  return rgb.map(c => {
+    return Math.round(c < 0 ? 0 : c * 255)
+  })
 }
 
 //////////////////////////////
