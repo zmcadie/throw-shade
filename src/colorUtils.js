@@ -157,7 +157,15 @@ const logBlend = (color1, color2, adj) => {
 const linearBlend = (color1, color2, adj) => blendArr(color1, color2, adj).map(num => Math.trunc(num))
 
 // convert [r, g, b] channels to hsl, blend, and convert back
-const hslBlend = (color1, color2, adj) => hslToRGB(blendArr(rgbToHSL(color1), rgbToHSL(color2), adj))
+const hslBlend = (color1, color2, adj) => {
+  const hsl1 = rgbToHSL(color1)
+  const hsl2 = rgbToHSL(color2)
+  if (hsl1[0] > hsl2[0] && hsl1[0] - hsl2[0] > hsl2[0] + 360 - hsl1[0]) hsl2[0] += 360
+  if (hsl1[0] < hsl2[0] && hsl2[0] - hsl1[0] > hsl1[0] + 360 - hsl2[0]) hsl1[0] += 360
+  const blended = blendArr(hsl1, hsl2, adj)
+  if (color1[1] === 255 && adj === 0) console.log(color1, hsl1, hslToRGB(blended))
+  return hslToRGB(blended)
+}
 
 const blenders = { log: logBlend, linear: linearBlend, hsl: hslBlend }
 
