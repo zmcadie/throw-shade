@@ -134,13 +134,7 @@ const hslToRGB = hsl => {
 }
 
 // more precise than above function
-// based on formula found at: https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB
-// 
-//    TO DO
-//    ‾‾‾‾‾
-//    fix issue in demo where first half of hsl blend is black
-// 
-//////////
+// based on formula found at https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB
 const hslToRGB2 = hsl => {
   const [h, s, l] = hsl.map((n, i) => i === 0 ? n : n / 100)
 
@@ -152,7 +146,7 @@ const hslToRGB2 = hsl => {
   // convert hue to a side of the rgb cube
   const h1 = h / 60
   // temp value for calculations
-  const x = c * (1 - (h1 % 2 - 1))
+  let x = c * (1 - Math.abs(h1 % 2 - 1))
 
   let rgb1 = [0, 0, 0]
   // find point along bottom three faces of the RGB cube with the same hue and chroma as our colour
@@ -169,7 +163,6 @@ const hslToRGB2 = hsl => {
   const m = l - c / 2
   // add m to each channel and convert to [0, 255] for RGB
   rgb1 = rgb1.map(ch => Math.round((ch + m) * 255))
-  console.log(hsl, rgb1)
   return rgb1
 }
 

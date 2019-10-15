@@ -39,7 +39,7 @@ const GradItem = styled.div`
 
 const SmoothGradient = ({ c1, c2, type = "log" }) => (
   <StyledGradient>
-    { [...Array(100).keys()].map(n => <GradItem key={ uuid() } style={{ background: blend(c1, c2, n / 100, type) }} />) }
+    { [...Array(101).keys()].map(n => <GradItem key={ uuid() } data-color={ blend(c1, c2, n / 100, type) } style={{ background: blend(c1, c2, n / 100, type) }} />) }
   </StyledGradient>
 )
 
