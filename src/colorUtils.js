@@ -133,6 +133,46 @@ const hslToRGB = hsl => {
   })
 }
 
+// more precise than above function
+// based on formula found at: https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB
+// 
+//    TO DO
+//    ‾‾‾‾‾
+//    fix issue in demo where first half of hsl blend is black
+// 
+//////////
+const hslToRGB2 = hsl => {
+  const [h, s, l] = hsl.map((n, i) => i === 0 ? n : n / 100)
+
+  // if there's no saturation it's a shade of grey so we just convert luminence and set r, g, and b to that level
+  if (s === 0) { return Array(3).fill(Math.round(l * 255)) }
+
+  // get chroma of original colour, (chroma is intensity of colour, similar to saturation)
+  const c = (1 - (2 * l - 1)) * s
+  // convert hue to a side of the rgb cube
+  const h1 = h / 60
+  // temp value for calculations
+  const x = c * (1 - (h1 % 2 - 1))
+
+  let rgb1 = [0, 0, 0]
+  // find point along bottom three faces of the RGB cube with the same hue and chroma as our colour
+  switch (Math.trunc(h1)) {
+    case 5: rgb1 = [c, 0, x]; break
+    case 4: rgb1 = [x, 0, c]; break
+    case 3: rgb1 = [0, x, c]; break
+    case 2: rgb1 = [0, c, x]; break
+    case 1: rgb1 = [x, c, 0]; break
+    default: rgb1 = [c, x, 0]
+  }
+
+  // value to add to each channel to match lightness
+  const m = l - c / 2
+  // add m to each channel and convert to [0, 255] for RGB
+  rgb1 = rgb1.map(ch => Math.round((ch + m) * 255))
+  console.log(hsl, rgb1)
+  return rgb1
+}
+
 //////////////////////////////
 //
 //    TO DO
@@ -167,8 +207,7 @@ const hslBlend = (color1, color2, adj) => {
   if (hsl1[0] > hsl2[0] && hsl1[0] - hsl2[0] > hsl2[0] + 360 - hsl1[0]) hsl2[0] += 360
   if (hsl1[0] < hsl2[0] && hsl2[0] - hsl1[0] > hsl1[0] + 360 - hsl2[0]) hsl1[0] += 360
   const blended = blendArr(hsl1, hsl2, adj)
-  if (color1[1] === 255 && adj === 0) console.log(color1, hsl1, hslToRGB(blended))
-  return hslToRGB(blended)
+  return hslToRGB2(blended)
 }
 
 const blenders = { log: logBlend, linear: linearBlend, hsl: hslBlend }
@@ -198,7 +237,7 @@ const conversionFunctions = {
   arrToHsl,
   getColorArray,
   rgbToHSL,
-  hslToRGB
+  hslToRGB: hslToRGB2
 }
 
 const blendingFunctions = {
