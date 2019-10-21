@@ -96,10 +96,18 @@ const Slider = ({
     if (Number.isInteger(newValue)) setControlledValue(newValue)
   }
 
+  const handleMouseOut = e => {
+    e.preventDefault()
+    e.currentTarget.onmousemove = ""
+    e.currentTarget.onmouseup = ""
+    e.currentTarget.onmouseout = ""
+  }
+
   const handleMouseUp = e => {
     e.preventDefault()
     e.currentTarget.onmousemove = ""
     e.currentTarget.onmouseup = ""
+    e.currentTarget.onmouseout = ""
   }
 
   const handleMouseDown = e => {
@@ -108,6 +116,7 @@ const Slider = ({
     if (Number.isInteger(newValue)) setControlledValue(newValue)
     e.currentTarget.onmousemove = handleMouseMove
     e.currentTarget.onmouseup = handleMouseUp
+    e.currentTarget.onmouseout = handleMouseOut
   }
   
   return (

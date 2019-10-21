@@ -7,6 +7,7 @@ const ButtonOuter = styled.div`
   border: 2px solid #444;
   border-bottom-right-radius: 4px;
   border-top-right-radius: 4px;
+  cursor: pointer;
   height: 20px;
   padding: 5px;
   width: 30px;
@@ -56,13 +57,17 @@ const PickerContainer = styled.div`
 `
 
 // required props: onChange[func: (colorStr) => {...}], value[colorStr], name[str]
-const ColorPicker = ({ value, name, ...props }) => {
+const ColorPicker = ({ value, name, onChange, ...props }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [color, setColor] = React.useState(value)
 
   const handleInputChange = e => {
     setColor(e.target.value)
   }
+
+  React.useEffect(() => {
+    if (color !== value) onChange(color)
+  }, [ color, onChange, value ])
 
   return (
     <PickerContainer {...props}>

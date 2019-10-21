@@ -4,6 +4,7 @@ import uuid from "uuid/v4"
 
 import ShadeDemo from "./components/ShadeDemo"
 import BlendDemo from "./components/BlendDemo"
+import DIYDemo from "./components/DIYDemo"
 import CodeBlock from "./components/CodeBlock"
 
 const AppContainer = styled.div`
@@ -102,6 +103,10 @@ const demos = [
     label: "Blend Colors",
     slug: "blend-colors",
     Comp: BlendDemo
+  }, {
+    label: "DIY",
+    slug: "diy",
+    Comp: DIYDemo
   }
 ]
 
