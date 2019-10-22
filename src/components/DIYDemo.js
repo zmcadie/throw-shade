@@ -8,6 +8,12 @@ import { blend, lighten, darken } from '../colorUtils'
 
 const colorFunctions = { blend, lighten, darken }
 
+
+////////////////////////////////////////
+//////                            //////
+//////      Component Styles      //////
+//////                            //////
+
 const FormSelectContainer = styled.div`
   align-items: flex-end;
   display: flex;
@@ -99,8 +105,46 @@ const FormSubmit = styled.button.attrs({type: "submit"})`
 `
 
 const FormResultDisplay = styled.div`
+  align-items: center;
+  border: 2px solid #444;
+  border-top: none;
+  display: flex;
+  padding: 20px 20px 30px;
 
+  > *:not(:first-child) {
+    margin-left: 10px;
+  }
 `
+
+const DisplayBlock = styled.div`
+  background: ${props => props["data-color"]};
+  border: 2px solid #444;
+  height: 100px;
+  position: relative;
+  width: 100px;
+
+  &::after {
+    content: attr(data-color);
+    display: block;
+    line-height: 30px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 100%;
+  }
+`
+
+//////                            //////
+//////      Component Styles      //////
+//////                            //////
+////////////////////////////////////////
+
+
+///////////////////////////////////////
+//////                           //////
+//////      Form Components      //////
+//////                           //////
 
 const LightenForm = () => {
   const [color, setColor] = React.useState("#77DD77")
@@ -183,6 +227,12 @@ const BlendForm = () => {
   )
 }
 
+//////                           //////
+//////      Form Components      //////
+//////                           //////
+///////////////////////////////////////
+
+
 const forms = {
   lighten: <LightenForm />,
   darken: <DarkenForm />,
@@ -191,7 +241,7 @@ const forms = {
 
 const DIYDemo = () => {
   const [func, setFunc] = React.useState("blend")
-  const [formData, setFormData] = React.useState({})
+  const [formData, setFormData] = React.useState()
   
   const handleSubmit = e => {
     e.preventDefault();
@@ -204,7 +254,7 @@ const DIYDemo = () => {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "800px" }}>
       <FormSelectContainer>
         <FormSelectButton {...{setFunc}} selected={func === "blend"} type="blend">Blend</FormSelectButton>
         <FormSelectButton {...{setFunc}} selected={func === "lighten"} type="lighten">Lighten</FormSelectButton>
@@ -213,9 +263,24 @@ const DIYDemo = () => {
       <FormContainer onSubmit={ handleSubmit }>
         { forms[func] }
       </FormContainer>
-      <FormResultDisplay>
-        { JSON.stringify(formData) }
-      </FormResultDisplay>
+      { formData
+        ? (
+          <FormResultDisplay>
+            <DisplayBlock data-color={formData.color || formData["base-color"]} />
+            {
+              formData["blend-color"]
+                ? (
+                  <>
+                    <span>and</span>
+                    <DisplayBlock data-color={formData["blend-color"]} />
+                  </>
+                ) : ""
+            }
+            <span>{ `${func}ed by ${formData.percent}% is ` }</span>
+            <DisplayBlock data-color={formData.res} />
+          </FormResultDisplay>
+        ) : ""
+      }
     </div>
   )
 }
