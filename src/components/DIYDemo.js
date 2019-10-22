@@ -49,6 +49,9 @@ const FormSelectButton = styled.button.attrs(props => {
 
 const FormContainer = styled.form`
   border: 2px solid #444;
+  display: flex;
+  flex-direction: column;
+  min-height: 330px;
   padding: 20px;
   padding-bottom: 0;
 
@@ -58,6 +61,14 @@ const FormContainer = styled.form`
     > :first-child {
       padding-top: 12px;
     }
+    
+    &:not(:first-child) {
+      margin-top: 12px;
+    }
+  }
+
+  > button[type="submit"] {
+    margin-top: auto;
   }
 `
 
@@ -186,8 +197,8 @@ const DIYDemo = () => {
     e.preventDefault();
     const form = Object.fromEntries(new FormData(e.target));
     const args = func === "blend"
-      ? [form["base-color"], form["blend-color"], form.percent]
-      : [form.color, form.percent]
+      ? [form["base-color"], form["blend-color"], form.percent / 100]
+      : [form.color, form.percent / 100]
     const res = colorFunctions[func](...args)
     setFormData({...form, res})
   };
